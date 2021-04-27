@@ -19,25 +19,54 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the view's delegate
         sceneView.delegate = self
         
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
         
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // Set the scene to the view
-        sceneView.scene = scene
     }
+    
+    //Image Detection -> ANCHOR - limit of 10 images
+    
+    
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
+        let configuration = ARImageTrackingConfiguration()
 
         // Run the view's session
         sceneView.session.run(configuration)
+        
+        //Link to AR resource group
+       if let referenceImages = ARReferenceImage.referenceImages(inGroupNamed: "Pokemon Cards", bundle: Bundle.main){
+        //Tracking
+        configuration.trackingImages = referenceImages
+        
+        configuration.maximumNumberOfTrackedImages = 2
+        
+        print("Images have been loaded successfully.")
+       }
+        
     }
+    
+    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode?{
+        
+        let node = SCNNode()
+        
+        if let anchor = anchor as? ARImageAnchor{
+        
+        let plane = SCNPlane(width: anchor.referenceImage.physicalSize.width, height: anchor.referenceImage.physicalSize.height)
+        
+            let planeNode = SCNNode(geometry: plane)
+            
+            planeNode.eulerAngles.x = -.pi / 2
+            
+            node.addChildNode(planeNode)
+            
+            
+        }
+        return node
+    }
+        
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
