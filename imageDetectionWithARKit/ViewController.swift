@@ -16,6 +16,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        sceneView.autoenablesDefaultLighting = true
+        
         // Set the view's delegate
         sceneView.delegate = self
         
@@ -32,9 +34,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         let configuration = ARImageTrackingConfiguration()
-
-        // Run the view's session
-        sceneView.session.run(configuration)
         
         //Link to AR resource group
        if let referenceImages = ARReferenceImage.referenceImages(inGroupNamed: "Pokemon Cards", bundle: Bundle.main){
@@ -45,6 +44,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         print("Images have been loaded successfully.")
        }
+        
+        // Run the view's session
+        sceneView.session.run(configuration)
         
     }
     
@@ -57,6 +59,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let plane = SCNPlane(width: anchor.referenceImage.physicalSize.width, height: anchor.referenceImage.physicalSize.height)
         
             let planeNode = SCNNode(geometry: plane)
+            
+            plane.firstMaterial?.diffuse.contents = UIColor(white: 1, alpha: 0.5)
             
             planeNode.eulerAngles.x = -.pi / 2
             
